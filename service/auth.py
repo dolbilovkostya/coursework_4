@@ -24,7 +24,7 @@ class AuthService:
 
         data = {
             "email": user.email,
-            "password": user.password
+            "password": user.password.decode('utf-8')
         }
 
         # 30 минут для токена на доступ
@@ -47,3 +47,4 @@ class AuthService:
         email = data.get('email')
 
         return  self.generate_tokens(email, None, is_refresh=True)
+

@@ -25,18 +25,19 @@ class User(db.Model):
 
 # with app.app_context():
 with db.session.begin():
-    user = db.session.query(User).get(2)
-    print(user.password)
+    user = db.session.query(User).get(4)
+    print(user.password, type(user.password))
 
     data = {
                 "email": user.email,
-                "password": user.password
+                "password": user.password.decode('utf-8')
             }
+
+
 
     min30 = datetime.datetime.utcnow() + datetime.timedelta(minutes=30)
     data["exp"] = calendar.timegm(min30.timetuple())
     print(data)
 
-    # data = {'email': 'second@email.com', 'password': 'KsArkvcyJvaI1rCSXh9uK4Q5FEgYUVp/U3BvcPaGqZE=', 'exp': 1677157048}
     access_token = jwt.encode(data, JWT_SECRET, algorithm=JWT_ALGO)
-    print(access_token)
+    access_token_2 = jwt.encode(data, JWT_SECRET, algorithm=JWT_ALGO)

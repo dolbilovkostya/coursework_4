@@ -34,14 +34,15 @@ class AuthLogView(Resource):
         tokens = auth_service.generate_tokens(email, password)
 
         return tokens, 201
-    #
-    # def put(self):
-    #     req_json = request.json
-    #     token = req_json.get('refresh_token')
-    #
-    #     if token is None:
-    #         return '', 404
-    #
-    #     tokens = auth_service.approve_refresh_token(token)
-    #
-    #     return tokens, 201
+
+    def put(self):
+        req_json = request.json
+        token = req_json.get('access_token')
+
+
+        if token is None:
+            return '', 404
+
+        tokens = auth_service.approve_refresh_token(token)
+
+        return tokens, 201

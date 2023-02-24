@@ -2,6 +2,8 @@ import base64
 import hashlib
 import hmac
 
+from flask_restx import abort
+
 from dao.user import UserDAO
 from constants import PWD_HASH_SALT, PWD_HASH_ITERATIONS
 
@@ -17,11 +19,8 @@ class UserService:
         return self.dao.get_by_email(email)
 
     def get_all(self, filters):
-        if filters.get("email") is not None:
-            users = self.dao.get_by_email(filters.get("email"))
-        else:
-            users = self.dao.get_all()
-        return users
+        return self.dao.get_all(filters)
+
 
     def delete(self, rid):
         self.dao.delete(rid)
@@ -54,7 +53,16 @@ class UserService:
         user_d['password'] = self.get_hash(user_d['password'])
         return self.dao.create(user_d)
 
-    def update(self, user_d):
-        user_d['password'] = self.get_hash(user_d['password'])
-        self.dao.update(user_d)
+    def patch_update(self, user_d):
+        # if 'password' in user_d:
+        #     user_d['password'] = self.get_hash(user_d['password'])
+        self.dao.patch_update(user_d)
+        return self.dao
+
+    def password_update(self, user_d):
+        if not self.compare_passwords(password=user_d['current_password'], hash=self.get_one(user_d['id']).password):
+            abort(401, "Provided current password is not correct")
+
+        user_d['new_password'] = self.get_hash(user_d['new_password'])
+        self.dao.password_update(user_d)
         return self.dao

@@ -30,5 +30,6 @@ def register_extensions(app):
 app = create_app(Config())
 app.debug = True
 
+
 if __name__ == '__main__':
     app.run(host="localhost", port=5000, debug=True)
